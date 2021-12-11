@@ -46,3 +46,15 @@ for x in range(len(predictions)):
 
 #Printing the overall accuracy
 print ("Accuracy: ", round(Accuracy, 2))
+
+#Set what x variable is for plot
+PlotX = "traveltime"
+
+#Creates Plot
+style.use("ggplot")
+pyplot.scatter(data[PlotX],data["G3"])
+pyplot.xlabel (PlotX)
+pyplot.ylabel ("Final Grade")
+
+#Shows Plot
+pyplot.show()
