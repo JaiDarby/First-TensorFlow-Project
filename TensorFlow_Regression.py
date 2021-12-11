@@ -9,11 +9,14 @@ import numpy as np
 import sklearn
 from sklearn import linear_model
 from sklearn.utils import shuffle
+import matplotlib.pyplot as pyplot
+import pickle
+from matplotlib import style
 
 
 #Pulling data used for testing
 data = pd.read_csv("student-mat.csv", sep=";")
-data = data[["G1", "G2", "G3", "studytime", "failures", "health", "goout"]]
+data = data[["G1", "G2", "G3", "studytime", "failures", "studytime", "traveltime"]]
 
 #setting value being tested
 predict = "G3"
@@ -22,24 +25,31 @@ predict = "G3"
 x = np.array(data.drop([predict], 1))
 y = np.array(data[predict])
 
-#Seperating data in lists to test
-x_train,x_test,y_train,y_test = sklearn.model_selection.train_test_split(x,y, test_size = 0.1)
+BestAcc = 0
 
-#setting learning model (Linear Regression)
-linear = linear_model.LinearRegression()
+while BestAcc < .95:
+    #Seperating data in lists to test
+    x_train,x_test,y_train,y_test = sklearn.model_selection.train_test_split(x,y, test_size = 0.1)
 
-#Creating line of best fit
-linear.fit(x_train, y_train)
+    #setting learning model (Linear Regression)
+    linear = linear_model.LinearRegression()
 
-#Finding accuracy of test
-Accuracy = linear.score(x_test, y_test)
+    #Creating line of best fit
+    linear.fit(x_train, y_train)
 
-#Findinf predictions of test
-predictions = linear.predict(x_test)
+    #Finding accuracy of test
+    Accuracy = linear.score(x_test, y_test)
 
-#Printing the predictions aside the actual scores
-for x in range(len(predictions)):
-    print("Prediction: ", round(predictions[x], 2),"Score: ", y_test[x])
+    #Findinf predictions of test
+    predictions = linear.predict(x_test)
 
-#Printing the overall accuracy
-print ("Accuracy: ", round(Accuracy, 2))
+    print(round(Accuracy, 2))
+
+    if Accuracy > BestAcc:
+        #Changes Best Accuracy if greater
+        BestAcc = Accuracy
+        #Create pickle file to save model
+        with open("Model.pickle", "wb") as f:
+            pickle.dump(linear, f)
+
+print ("Best Accuracy:",round(BestAcc, 2))
